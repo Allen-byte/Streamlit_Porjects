@@ -2,11 +2,10 @@
 
 import streamlit as st
 from PIL import Image
-import cv2 as cv
 from aip import AipFace
 from aip import AipImageClassify
 import base64, io
-import numpy as np
+
 
 # 百度人脸识别 APPID
 APP_ID = '25722045'
@@ -21,6 +20,13 @@ SECRET_KEY_1 = 'riBadkDBaA5e23xQzKGdIzAdFSYOrDdW'
 
 client = AipFace(APP_ID, API_KEY, SECRET_KEY)
 client_1 = AipImageClassify(APP_ID_1, API_KEY_1, SECRET_KEY_1)
+
+
+# Image对象转二进制流
+def Image2Bytes(image):
+    img_byte = io.BytesIO()
+    image.save(img_byte, format='JPEG')
+    return img_byte.getvalue()
 
 
 # 面容检测
@@ -40,19 +46,9 @@ def face(img_data, client):
 
 # 传入的参数是Image图片
 def face_value(client, image):
-    # 将Image对象转为cv对象
-    img = cv.cvtColor(np.array(image), cv.COLOR_RGB2BGR)
-    gray_img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-    face_detector = cv.CascadeClassifier("D:/pythonWorkSpace/static/haarcascade_frontalface_default.xml")
-    faces = face_detector.detectMultiScale(gray_img, 1.1, 5)
-    for x, y, w, h in faces:
-        cv.rectangle(img, (x, y), (x + w, y + h), color=(0, 0, 255), thickness=2)
-    # 将cv对象转为bytes
-    img_bytes = cv.imencode('.jpg', img)[1]
+    img_bytes = Image2Bytes(image)
     age, faceValue = face(img_bytes, client)
-    cv.waitKey(0)
-    cv.destroyAllWindows()
-    return cv.cvtColor(img, cv.COLOR_BGR2RGB), age, faceValue
+    return age, faceValue
 
 
 # 动物识别
@@ -88,13 +84,6 @@ def dish_detection(client, image):
     return name, calorie
 
 
-# Image对象转二进制流
-def Image2Bytes(image):
-    img_byte = io.BytesIO()
-    image.save(img_byte, format='JPEG')
-    return img_byte.getvalue()
-
-
 uploaded_file = st.file_uploader('please choose the upload image')
 tab1, tab2, tab3 = st.tabs(['面容检测', '动物识别', '菜品识别'])
 
@@ -104,8 +93,8 @@ if uploaded_file:
         if st.button('开始测试', key=0):
             with st.spinner('please waiting...'):
                 try:
-                    img, age, faceValue = face_value(client, image)
-                    st.image(img)
+                    age, faceValue = face_value(client, image)
+                    st.image(image)
                     st.header('预测结果如下：')
                     if faceValue > 80.00:
                         text = f'颜值: {faceValue}(惊为天人!)'
