@@ -6,16 +6,16 @@ from aip import AipFace
 from aip import AipImageClassify
 import base64, io
 
-
+# replace your own data
 # 百度人脸识别 APPID
-APP_ID = '25722045'
-API_KEY = 'xBncwPok33dZzSOhjLRf5EG3'
-SECRET_KEY = 'pgrjjT6GbEZDnsUilUN4xOaTgk6UDGNF'
+APP_ID = 'xxxx'
+API_KEY = 'xxxx'
+SECRET_KEY = 'xxxx'
 
 # 百度图像识别参数
-APP_ID_1 = '33185622'
-API_KEY_1 = 'GKV7qrz8E2HIYDBbUldXFuu9'
-SECRET_KEY_1 = 'riBadkDBaA5e23xQzKGdIzAdFSYOrDdW'
+APP_ID_1 = 'xxxx'
+API_KEY_1 = 'xxxx'
+SECRET_KEY_1 = 'xxxxx'
 
 
 client = AipFace(APP_ID, API_KEY, SECRET_KEY)
